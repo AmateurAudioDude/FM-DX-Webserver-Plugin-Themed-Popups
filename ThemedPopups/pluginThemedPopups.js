@@ -21,6 +21,7 @@ var cssCodeThemedPopups = `
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     opacity: 0;
     transition: opacity 0.3s ease-in;
+    z-index: 9999;
 }
 
 .popup-content {
@@ -32,7 +33,7 @@ var cssCodeThemedPopups = `
 }
 
 .popup.open {
-    opacity: .98;
+    opacity: .99;
 }
 `;
 styleElement.appendChild(document.createTextNode(cssCodeThemedPopups));
