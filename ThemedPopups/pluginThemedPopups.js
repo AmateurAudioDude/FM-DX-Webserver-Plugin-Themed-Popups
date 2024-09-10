@@ -1,6 +1,6 @@
 /*
-	Themed Popups v1.0.0 by AAD
-	https://github.com/AmateurAudioDude
+    Themed Popups v1.1.0 by AAD
+    https://github.com/AmateurAudioDude
 */
 
 // Global variables for other plugins
@@ -57,11 +57,11 @@ function alert(popupMessage, popupButton) {
             event.stopPropagation(); // Prevent event propagation
         });
 
-        popupOpened = true; // Set popupOpened flag to true
-
         // Trigger the fade-in effect
         setTimeout(function() {
             popup.classList.add('open');
+            popupOpened = true; // Set popupOpened flag to true
+            blurBackground(true);
         }, 10);
     }
 }
@@ -122,11 +122,10 @@ function confirm(popupMessage) {
                 event.stopPropagation(); // Prevent event propagation
             });
 
-            popupOpened = true; // Set popupOpened flag to true
-
             // Trigger the fade-in effect
             setTimeout(function() {
                 popup.classList.add('open');
+                popupOpened = true; // Set popupOpened flag to true
             }, 10);
         }
     });
@@ -134,9 +133,17 @@ function confirm(popupMessage) {
 
 // Function to create the prompt popup
 function prompt(popupMessage, defaultValue) {
+        if (popupOpened) { // Exit if a popup is already open
+            return;
+        }
     return new Promise(function(resolve, reject) {
+        if (popupPromptOpened) { // Exit if a prompt popup is already open
+            return;
+        }
         var popupOpened = false; // Local variable to track popup state
         var popup; // Declare popup variable outside if block
+
+        blurBackground(true);
 
         function closePopup(event) {
             if (popupOpened) {
@@ -162,15 +169,25 @@ function prompt(popupMessage, defaultValue) {
             var confirmButton = popup.querySelector('#popup-confirm');
             var cancelButton = popup.querySelector('#popup-cancel');
 
+            // Automatic focus
+            inputField.focus();
+            popupPromptOpened = true;
+
             confirmButton.addEventListener('click', function() {
                 var value = inputField.value;
                 closePopup();
                 resolve(value); // Resolve the promise with the input value
+                popupPromptOpened = false;
+                setTimeout(function() {
+                    blurBackground(false);
+                }, 3);
             });
 
             cancelButton.addEventListener('click', function() {
                 closePopup();
-                resolve(null); // Resolve with null if canceled
+                resolve(null); // Resolve with null if cancelled
+                popupPromptOpened = false;
+                blurBackground(false);
             });
 
             // Event listener for ESC key
@@ -179,6 +196,8 @@ function prompt(popupMessage, defaultValue) {
                     event.preventDefault(); // Prevent default behavior (e.g., closing alert)
                     closePopup();
                     resolve(null); // Resolve with null if ESC key pressed
+                    popupPromptOpened = false;
+                    blurBackground(false);
                     document.removeEventListener('keydown', handleEscKey); // Remove event listener after use
                 }
             }
@@ -192,6 +211,8 @@ function prompt(popupMessage, defaultValue) {
                     var value = inputField.value;
                     closePopup();
                     resolve(value); // Resolve the promise with the input value
+                    popupPromptOpened = false;
+                    blurBackground(false);
                 }
             });
 
@@ -199,19 +220,41 @@ function prompt(popupMessage, defaultValue) {
                 event.stopPropagation(); // Prevent event propagation
             });
 
-            popupOpened = true; // Set popupOpened flag to true
-
             // Trigger the fade-in effect
             setTimeout(function() {
                 popup.classList.add('open');
+                popupOpened = true; // Set popupOpened flag to true
             }, 10);
         }
     });
 }
 
+function blurBackground(status) {
+    // Blur background
+    if (status === true) {
+      if (idModal) {
+          idModal.style.display = 'block';
+        setTimeout(function() {
+          idModal.style.opacity = '1';
+        }, 40);
+      }
+    } else {
+      // Restore background
+      if (idModal) {
+        setTimeout(function() {
+          idModal.style.display = 'none';
+        }, 400);
+          idModal.style.opacity = '0';
+      }
+    }
+}
+
 // Global variables for popup state
 var popupOpened = false;
 var popup;
+
+var popupPromptOpened = false;
+var idModal = document.getElementById('myModal');
 
 // Function to close the popup
 function closePopup(event) {
@@ -220,13 +263,15 @@ function closePopup(event) {
     popup.classList.remove('open'); // Fade out
     setTimeout(function() {
         popup.remove();
+        blurBackground(false);
     }, 300); // Remove after fade-out transition
 }
 
 // Event listener for ESC key to close popup
 document.addEventListener('keydown', function(event) {
-    if (event.key === 'Escape' && popupOpened) {
+    if ((event.key === 'Escape' || event.key === 'Enter') && popupOpened) {
         closePopup(event);
+        blurBackground(false);
     }
 });
 
