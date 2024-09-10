@@ -11,6 +11,13 @@ This plugin uses the website's theme for JavaScript functions `alert()`, `confir
 
 `alert()`, `confirm()`, and `prompt()` are all compatible with both the plugin and browsers' native functions when used as demonstrated in `pluginThemedPopups.js`.
 
+v1.1.0
+------
+* Use blurred background
+* Use input focus for prompt popup
+* Fixed no additional prompt popups if already open
+* Check if Enter key is pressed
+
 v1.0.0
 ------
 * Public release
