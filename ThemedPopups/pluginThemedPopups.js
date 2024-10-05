@@ -1,7 +1,13 @@
 /*
-    Themed Popups v1.1.0 by AAD
+    Themed Popups v1.1.1 by AAD
     https://github.com/AmateurAudioDude
 */
+
+//////////////////////////////////////////////////
+
+const isClickedOutsidePopup = true; // Closes popup when clicked outside
+
+//////////////////////////////////////////////////
 
 // Global variables for other plugins
 pluginThemedPopup = true;
@@ -269,11 +275,21 @@ function closePopup(event) {
 
 // Event listener for ESC key to close popup
 document.addEventListener('keydown', function(event) {
-    if ((event.key === 'Escape' || event.key === 'Enter') && popupOpened) {
+    if (popupOpened && (event.key === 'Escape' || event.key === 'Enter')) {
         closePopup(event);
         blurBackground(false);
     }
 });
+
+if (isClickedOutsidePopup) {
+  // Event listener for clicks outside the popup to close it
+  document.addEventListener('click', function(event) {
+      if (popupOpened && !popup.contains(event.target)) {
+          closePopup(event);
+          blurBackground(false);
+      }
+  });
+}
 
 /*
 
