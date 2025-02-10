@@ -1,5 +1,5 @@
 /*
-    Themed Popups v1.1.1 by AAD
+    Themed Popups v1.1.2 by AAD
     https://github.com/AmateurAudioDude
 */
 
@@ -15,7 +15,7 @@ pluginThemedPopup = true;
 var styleElement = document.createElement('style');
 var cssCodeThemedPopups = `
 /* Themed Popups CSS */
-.popup {
+.popup-plugin {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -30,15 +30,15 @@ var cssCodeThemedPopups = `
     z-index: 9999;
 }
 
-.popup-content {
+.popup-plugin-content {
     text-align: center;
 }
 
-.popup button {
+.popup-plugin button {
     margin-top: 10px;
 }
 
-.popup.open {
+.popup-plugin.open {
     opacity: .99;
 }
 `;
@@ -52,11 +52,11 @@ function alert(popupMessage, popupButton) {
     }
     if (!popupOpened) { // Check if a popup is not already open
         popup = document.createElement('div');
-        popup.classList.add('popup');
-        popup.innerHTML = `<div class="popup-content">${popupMessage.replace(/\n/g, '<br>')}<button id="popup-close">${popupButton}</button></div>`;
+        popup.classList.add('popup-plugin');
+        popup.innerHTML = `<div class="popup-plugin-content">${popupMessage.replace(/\n/g, '<br>')}<button id="popup-plugin-close">${popupButton}</button></div>`;
         document.body.appendChild(popup);
 
-        var closeButton = popup.querySelector('#popup-close');
+        var closeButton = popup.querySelector('#popup-plugin-close');
         closeButton.addEventListener('click', closePopup);
 
         popup.addEventListener('click', function(event) {
@@ -90,16 +90,16 @@ function confirm(popupMessage) {
 
         if (!popupOpened) { // Check if a popup is not already open
             popup = document.createElement('div');
-            popup.classList.add('popup');
+            popup.classList.add('popup-plugin');
             popup.innerHTML = `
-                <div class="popup-content">${popupMessage.replace(/\n/g, '<br>')}
-                    <button id="popup-confirm">OK</button>
-                    <button id="popup-cancel">Cancel</button>
+                <div class="popup-plugin-content">${popupMessage.replace(/\n/g, '<br>')}
+                    <button id="popup-plugin-confirm">OK</button>
+                    <button id="popup-plugin-cancel">Cancel</button>
                 </div>`;
             document.body.appendChild(popup);
 
-            var confirmButton = popup.querySelector('#popup-confirm');
-            var cancelButton = popup.querySelector('#popup-cancel');
+            var confirmButton = popup.querySelector('#popup-plugin-confirm');
+            var cancelButton = popup.querySelector('#popup-plugin-cancel');
 
             confirmButton.addEventListener('click', function() {
                 closePopup();
@@ -163,17 +163,17 @@ function prompt(popupMessage, defaultValue) {
 
         if (!popupOpened) { // Check if a popup is not already open
             popup = document.createElement('div');
-            popup.classList.add('popup');
+            popup.classList.add('popup-plugin');
             popup.innerHTML = `
-                <div class="popup-content">${popupMessage.replace(/\n/g, '<br>')}<br><input type="text" id="popup-input" style="padding-left: 10px; padding-right: 10px" value="${defaultValue || ''}">
-                    <button id="popup-confirm">OK</button>
-                    <button id="popup-cancel">Cancel</button>
+                <div class="popup-plugin-content">${popupMessage.replace(/\n/g, '<br>')}<br><input type="text" id="popup-plugin-input" style="padding-left: 10px; padding-right: 10px" value="${defaultValue || ''}">
+                    <button id="popup-plugin-confirm">OK</button>
+                    <button id="popup-plugin-cancel">Cancel</button>
                 </div>`;
             document.body.appendChild(popup);
 
-            var inputField = popup.querySelector('#popup-input');
-            var confirmButton = popup.querySelector('#popup-confirm');
-            var cancelButton = popup.querySelector('#popup-cancel');
+            var inputField = popup.querySelector('#popup-plugin-input');
+            var confirmButton = popup.querySelector('#popup-plugin-confirm');
+            var cancelButton = popup.querySelector('#popup-plugin-cancel');
 
             // Automatic focus
             inputField.focus();
