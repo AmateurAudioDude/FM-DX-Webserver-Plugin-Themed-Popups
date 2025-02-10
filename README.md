@@ -11,6 +11,10 @@ This plugin uses the website's theme for JavaScript functions `alert()`, `confir
 
 `alert()`, `confirm()`, and `prompt()` are all compatible with both the plugin and browsers' native functions when used as demonstrated in `pluginThemedPopups.js`.
 
+v1.1.2
+------
+* Fix for FM-DX Webserver v1.3.4 compatibility issues
+
 v1.1.1
 ------
 * Added option to close popup when clicked outside
