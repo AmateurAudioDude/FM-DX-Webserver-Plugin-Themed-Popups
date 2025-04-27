@@ -10,7 +10,6 @@ const isClickedOutsidePopup = true; // Closes popup when clicked outside
 //////////////////////////////////////////////////
 
 // Global variables for other plugins
-pluginThemedPopup = true;
 window.hasCustomPopup = true;
 
 let styleElement = document.createElement('style');
