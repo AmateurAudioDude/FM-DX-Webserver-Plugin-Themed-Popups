@@ -1,5 +1,5 @@
 /*
-    Themed Popups v1.1.2 by AAD
+    Themed Popups v1.1.3 by AAD
     https://github.com/AmateurAudioDude
 */
 
@@ -11,23 +11,35 @@ const isClickedOutsidePopup = true; // Closes popup when clicked outside
 
 // Global variables for other plugins
 pluginThemedPopup = true;
+window.hasCustomPopup = true;
 
-var styleElement = document.createElement('style');
-var cssCodeThemedPopups = `
+let styleElement = document.createElement('style');
+let cssCodeThemedPopups = `
 /* Themed Popups CSS */
 .popup-plugin {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: var(--color-2); /* Background */
-    color: var(--color-main-bright); /* Text */
+    background-color: var(--color-2);
+    color: var(--color-main-bright);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
     opacity: 0;
     transition: opacity 0.3s ease-in;
     z-index: 9999;
+
+    /* Responsive sizing */
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow: auto;
+}
+
+@media (max-width: 400px) {
+    .popup-plugin {
+        padding: 10px;
+    }
 }
 
 .popup-plugin-content {
@@ -39,7 +51,7 @@ var cssCodeThemedPopups = `
 }
 
 .popup-plugin.open {
-    opacity: .99;
+    opacity: 0.99;
 }
 `;
 styleElement.appendChild(document.createTextNode(cssCodeThemedPopups));
@@ -56,7 +68,7 @@ function alert(popupMessage, popupButton) {
         popup.innerHTML = `<div class="popup-plugin-content">${popupMessage.replace(/\n/g, '<br>')}<button id="popup-plugin-close">${popupButton}</button></div>`;
         document.body.appendChild(popup);
 
-        var closeButton = popup.querySelector('#popup-plugin-close');
+        let closeButton = popup.querySelector('#popup-plugin-close');
         closeButton.addEventListener('click', closePopup);
 
         popup.addEventListener('click', function(event) {
@@ -73,22 +85,22 @@ function alert(popupMessage, popupButton) {
 }
 
 // Function to create the confirm popup
-function confirm(popupMessage) {
+function confirmAsync(popupMessage) {
     return new Promise(function(resolve, reject) {
-        var popupOpened = false; // Local variable to track popup state
-        var popup; // Declare popup variable outside if block
+        let popupOpened = false;
+        let popup;
 
-        function closePopup(event) {
+        function closePopup() {
             if (popupOpened) {
-                popupOpened = false; // Set popupOpened flag to false
-                popup.classList.remove('open'); // Fade out
+                popupOpened = false;
+                popup.classList.remove('open');
                 setTimeout(function() {
                     popup.remove();
-                }, 300); // Remove after fade-out transition
+                }, 300);
             }
         }
 
-        if (!popupOpened) { // Check if a popup is not already open
+        if (!popupOpened) {
             popup = document.createElement('div');
             popup.classList.add('popup-plugin');
             popup.innerHTML = `
@@ -98,25 +110,25 @@ function confirm(popupMessage) {
                 </div>`;
             document.body.appendChild(popup);
 
-            var confirmButton = popup.querySelector('#popup-plugin-confirm');
-            var cancelButton = popup.querySelector('#popup-plugin-cancel');
+            let confirmButton = popup.querySelector('#popup-plugin-confirm');
+            let cancelButton = popup.querySelector('#popup-plugin-cancel');
 
             confirmButton.addEventListener('click', function() {
                 closePopup();
-                resolve(true); // Resolve the promise with true (OK clicked)
+                resolve(true);
             });
 
             cancelButton.addEventListener('click', function() {
                 closePopup();
-                resolve(false); // Resolve the promise with false (Cancel clicked)
+                resolve(false);
             });
 
             // Event listener for ESC key
             function handleEscKey(event) {
                 if (event.key === 'Escape' && popupOpened) {
-                    event.preventDefault(); // Prevent default behavior (e.g., closing alert)
+                    event.preventDefault();
                     closePopup();
-                    resolve(false); // Resolve with false if ESC key pressed (cancel behavior)
+                    resolve(false);
                     document.removeEventListener('keydown', handleEscKey); // Remove event listener after use
                 }
             }
@@ -125,39 +137,38 @@ function confirm(popupMessage) {
             document.addEventListener('keydown', handleEscKey);
 
             popup.addEventListener('click', function(event) {
-                event.stopPropagation(); // Prevent event propagation
+                event.stopPropagation();
             });
 
-            // Trigger the fade-in effect
             setTimeout(function() {
                 popup.classList.add('open');
-                popupOpened = true; // Set popupOpened flag to true
+                popupOpened = true;
             }, 10);
         }
     });
 }
 
 // Function to create the prompt popup
-function prompt(popupMessage, defaultValue) {
-        if (popupOpened) { // Exit if a popup is already open
+function promptAsync(popupMessage, defaultValue) {
+        if (popupOpened) {
             return;
         }
     return new Promise(function(resolve, reject) {
-        if (popupPromptOpened) { // Exit if a prompt popup is already open
+        if (popupPromptOpened) {
             return;
         }
-        var popupOpened = false; // Local variable to track popup state
-        var popup; // Declare popup variable outside if block
+        let popupOpened = false;
+        let popup;
 
         blurBackground(true);
 
-        function closePopup(event) {
+        function closePopup() {
             if (popupOpened) {
-                popupOpened = false; // Set popupOpened flag to false
-                popup.classList.remove('open'); // Fade out
+                popupOpened = false;
+                popup.classList.remove('open');
                 setTimeout(function() {
                     popup.remove();
-                }, 300); // Remove after fade-out transition
+                }, 300);
             }
         }
 
@@ -171,18 +182,17 @@ function prompt(popupMessage, defaultValue) {
                 </div>`;
             document.body.appendChild(popup);
 
-            var inputField = popup.querySelector('#popup-plugin-input');
-            var confirmButton = popup.querySelector('#popup-plugin-confirm');
-            var cancelButton = popup.querySelector('#popup-plugin-cancel');
+            let inputField = popup.querySelector('#popup-plugin-input');
+            let confirmButton = popup.querySelector('#popup-plugin-confirm');
+            let cancelButton = popup.querySelector('#popup-plugin-cancel');
 
-            // Automatic focus
             inputField.focus();
             popupPromptOpened = true;
 
             confirmButton.addEventListener('click', function() {
-                var value = inputField.value;
+                let value = inputField.value;
                 closePopup();
-                resolve(value); // Resolve the promise with the input value
+                resolve(value);
                 popupPromptOpened = false;
                 setTimeout(function() {
                     blurBackground(false);
@@ -191,7 +201,7 @@ function prompt(popupMessage, defaultValue) {
 
             cancelButton.addEventListener('click', function() {
                 closePopup();
-                resolve(null); // Resolve with null if cancelled
+                resolve(null);
                 popupPromptOpened = false;
                 blurBackground(false);
             });
@@ -199,12 +209,12 @@ function prompt(popupMessage, defaultValue) {
             // Event listener for ESC key
             function handleEscKey(event) {
                 if (event.key === 'Escape' && popupOpened) {
-                    event.preventDefault(); // Prevent default behavior (e.g., closing alert)
+                    event.preventDefault();
                     closePopup();
-                    resolve(null); // Resolve with null if ESC key pressed
+                    resolve(null);
                     popupPromptOpened = false;
                     blurBackground(false);
-                    document.removeEventListener('keydown', handleEscKey); // Remove event listener after use
+                    document.removeEventListener('keydown', handleEscKey);
                 }
             }
 
@@ -214,7 +224,7 @@ function prompt(popupMessage, defaultValue) {
             // Event listener for Enter key on input field
             inputField.addEventListener('keydown', function(event) {
                 if (event.key === 'Enter') {
-                    var value = inputField.value;
+                    let value = inputField.value;
                     closePopup();
                     resolve(value); // Resolve the promise with the input value
                     popupPromptOpened = false;
@@ -223,13 +233,12 @@ function prompt(popupMessage, defaultValue) {
             });
 
             popup.addEventListener('click', function(event) {
-                event.stopPropagation(); // Prevent event propagation
+                event.stopPropagation();
             });
 
-            // Trigger the fade-in effect
             setTimeout(function() {
                 popup.classList.add('open');
-                popupOpened = true; // Set popupOpened flag to true
+                popupOpened = true;
             }, 10);
         }
     });
@@ -256,11 +265,11 @@ function blurBackground(status) {
 }
 
 // Global variables for popup state
-var popupOpened = false;
-var popup;
+let popupOpened = false;
+let popup;
 
-var popupPromptOpened = false;
-var idModal = document.getElementById('myModal');
+let popupPromptOpened = false;
+let idModal = document.getElementById('myModal');
 
 // Function to close the popup
 function closePopup(event) {
@@ -299,23 +308,18 @@ alert('Alert!', 'Close');
 
 
 // Confirm example
-(async function() {
-    if (await confirm("Press a button")) {
-        alert('OK');
-    } else {
-        alert('Cancel');
-    }
-})();
+if (window.hasCustomPopup) {
+    confirmAsync("Press a button");
+} else {
+    confirm("Press a button");
+}
 
 
 // Prompt example
-(async function() {
-    let userInput = await prompt('Enter text:', 'Sample text');
-    if (userInput !== null) {
-        alert(`Text: ${userInput}`);
-    } else {
-        alert('Cancel');
-    }
-})();
+if (window.hasCustomPopup) {
+    promptAsync('Enter text:', 'Sample text');
+} else {
+    prompt('Enter text:', 'Sample text');
+}
 
 */
