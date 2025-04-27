@@ -9,7 +9,33 @@ This plugin uses the website's theme for JavaScript functions `alert()`, `confir
 
 ## Formatting
 
-`alert()`, `confirm()`, and `prompt()` are all compatible with both the plugin and browsers' native functions when used as demonstrated in `pluginThemedPopups.js`.
+### How to use in plugins:
+
+By default, `alert` dialogs are safely overridden.
+
+To safely make use of `confirm` and `prompt` dialogs, here's an example of each:
+
+```
+// Confirm example
+if (window.hasCustomPopup) {
+    confirmAsync("Press a button");
+} else {
+    confirm("Press a button");
+}
+```
+
+```
+// Prompt example
+if (window.hasCustomPopup) {
+    promptAsync('Enter text:', 'Sample text');
+} else {
+    prompt('Enter text:', 'Sample text');
+}
+```
+
+v1.1.3
+------
+* Popup is scrollable if browser's viewport is too small
 
 v1.1.2
 ------
