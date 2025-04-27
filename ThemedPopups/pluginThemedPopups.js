@@ -90,7 +90,7 @@ function confirmAsync(popupMessage) {
         let popupOpened = false;
         let popup;
 
-        function closePopup() {
+        function closePopup(event) {
             if (popupOpened) {
                 popupOpened = false;
                 popup.classList.remove('open');
@@ -162,7 +162,7 @@ function promptAsync(popupMessage, defaultValue) {
 
         blurBackground(true);
 
-        function closePopup() {
+        function closePopup(event) {
             if (popupOpened) {
                 popupOpened = false;
                 popup.classList.remove('open');
