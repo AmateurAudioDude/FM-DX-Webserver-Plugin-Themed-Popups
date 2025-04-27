@@ -11,9 +11,7 @@ This plugin uses the website's theme for JavaScript functions `alert()`, `confir
 
 ### How to use in plugins:
 
-By default, `alert` dialogs are safely overridden.
-
-To safely make use of `confirm` and `prompt` dialogs, here's an example of each:
+By default, `alert()` dialogs are safely overridden. To safely make use of `confirm()` and `prompt()` dialogs, here's an example of each:
 
 ```
 // Confirm example
